@@ -21,6 +21,7 @@ public class AlarmModelDb {
     private Boolean active;
 
     public AlarmModelDb(String time, String name, Boolean active) {
+        this.id = 0;
         this.time = time;
         this. name = name;
         this.active = active;

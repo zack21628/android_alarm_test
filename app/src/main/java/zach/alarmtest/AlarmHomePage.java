@@ -9,6 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -22,19 +24,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlarmHomePage extends AppCompatActivity {
-    ListView list;
-    AlarmAdapter adapter;
     public AlarmHomePage CustomListView = null;
-    public ArrayList<AlarmModel> CustomListViewValues = new ArrayList<AlarmModel>();
-
-    private AlarmViewModel alarmViewModel;
+    public ArrayList<AlarmModelDb> CustomListViewValues = new ArrayList<AlarmModelDb>();
+    private AlarmViewModel mAlarmViewModel;
 
     public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_alarm_home);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -43,44 +44,22 @@ public class AlarmHomePage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(AlarmHomePage.super.getBaseContext(), CreateEditAlarmPage.class);
-                //intent.putExtra()
-                //startActivity(intent);
                 startActivityForResult(intent, NEW_WORD_ACTIVITY_REQUEST_CODE);
             }
         });
 
-        list = (ListView) findViewById(R.id.list);
-        CustomListView = this;
-        // setListData();
-        Resources res = getResources();
+        RecyclerView recyclerView = findViewById(R.id.recyclerview);
+        final AlarmAdapter adapter = new AlarmAdapter(this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new AlarmAdapter(CustomListView, CustomListViewValues, res);
-
-        alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
-        alarmViewModel.getAllAlarms().observe(this, new Observer<List<AlarmModelDb>>() {
+        mAlarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
+        mAlarmViewModel.getAllAlarms().observe(this, new Observer<List<AlarmModelDb>>() {
             @Override
-            public void onChanged(@Nullable final List<AlarmModelDb> alarms) {
-                adapter.setAlarms(alarms);
+            public void onChanged(@Nullable final List<AlarmModelDb> alarmModelDbs) {
+                adapter.setAlarms(alarmModelDbs);
             }
         });
-        list.setAdapter(adapter);
-    }
-    public void setListData() {
-        Boolean a = true;
-        for (int i = 0; i < 11; i++){
-            final AlarmModel alarm_item = new AlarmModel();
-            alarm_item.setTime("10:0" + i);
-            alarm_item.setName("Alarm "+ i);
-            alarm_item.setActive(a);
-            a = !a;
-            CustomListViewValues.add(alarm_item);
-        }
-    }
-
-    public void onItemClick(int mPosition) {
-        AlarmModel tempValues = (AlarmModel) CustomListViewValues.get(mPosition);
-        Toast.makeText(CustomListView, "" + tempValues.getTime() + "Name:" + tempValues.getName()
-                        + "Url:" + tempValues.getActive(), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -112,7 +91,16 @@ public class AlarmHomePage extends AppCompatActivity {
         if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             String[] extraArray = data.getStringArrayExtra(CreateEditAlarmPage.EXTRA_REPLY);
             AlarmModelDb alarm = new AlarmModelDb(extraArray[0], extraArray[1], true);
-            alarmViewModel.insert(alarm);
+
+            Integer iid = alarm.getId();
+            Log.d("id", iid.toString());
+            List<AlarmModelDb> allAlarms = mAlarmViewModel.getAllAlarms().getValue();
+            for (AlarmModelDb al : allAlarms) {
+                Integer i = al.getId();
+                Log.d("test", i.toString());
+            }
+
+            mAlarmViewModel.insert(alarm);
         }
         else {
             Toast.makeText(getApplicationContext(), R.string.alarm_not_saved, Toast.LENGTH_LONG).show();

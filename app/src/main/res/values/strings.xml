@@ -8,4 +8,9 @@
     <string name="new_alarm_name">Alarm name</string>
     <string name="add_alarm">Save</string>
     <string name="alarm_not_saved">Could not save alarm</string>
+    <string name="alarm_colon">:</string>
+    <string name="alarm_hour_string">01</string>
+    <string name="alarm_minute_string">00</string>
+    <string name="am">AM</string>
+    <string name="pm">PM</string>
 </resources>

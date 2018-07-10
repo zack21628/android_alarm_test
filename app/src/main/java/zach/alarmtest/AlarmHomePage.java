@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class AlarmHomePage extends AppCompatActivity {
@@ -90,21 +91,30 @@ public class AlarmHomePage extends AppCompatActivity {
 
         if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             String[] extraArray = data.getStringArrayExtra(CreateEditAlarmPage.EXTRA_REPLY);
-            AlarmModelDb alarm = new AlarmModelDb(extraArray[0], extraArray[1], true);
-
-            Integer iid = alarm.getId();
-            Log.d("id", iid.toString());
+            String alarmTime = extraArray[0];
+            String alarmName = extraArray[1];
+            Date alarmDate = parseAlarmTime(alarmTime);
+            AlarmModelDb alarm = new AlarmModelDb(extraArray[0], alarmName, true);
             List<AlarmModelDb> allAlarms = mAlarmViewModel.getAllAlarms().getValue();
-            for (AlarmModelDb al : allAlarms) {
-                Integer i = al.getId();
-                Log.d("test", i.toString());
-            }
-
             mAlarmViewModel.insert(alarm);
         }
         else {
             Toast.makeText(getApplicationContext(), R.string.alarm_not_saved, Toast.LENGTH_LONG).show();
         }
+    }
+
+    public Date parseAlarmTime(String time){
+        Integer hour, minute;
+        String am_pm;
+        hour = Integer.parseInt(time.substring(0,2));
+        minute = Integer.parseInt(time.substring(3, 5));
+//        am_pm = time.substring(5));
+
+        Date d = new Date();
+        d.setHours(hour);
+        d.setMinutes(minute);
+
+        return d;
     }
 }
 

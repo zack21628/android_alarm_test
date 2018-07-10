@@ -22,9 +22,6 @@ public class CreateEditAlarmPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_edit_alarm_page);
-//        newAlarmHour = findViewById(R.id.alarm_hour);
-//        newAlarmMinute = findViewById(R.id.alarm_minute);
-//        newAlarmAmPm = findViewById(R.id.alarm_am_pm);
         newAlarmName = findViewById(R.id.new_alarm_name);
 
         final TextView alarm_hour = findViewById(R.id.alarm_hour);

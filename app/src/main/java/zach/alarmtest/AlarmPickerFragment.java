@@ -2,17 +2,18 @@ package zach.alarmtest;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import java.util.Calendar;
 import java.util.Locale;
 
 public class AlarmPickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
     @Override
+    @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         return new TimePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, this, 12, 0,
                 DateFormat.is24HourFormat(getActivity()));
@@ -25,6 +26,9 @@ public class AlarmPickerFragment extends DialogFragment implements TimePickerDia
         if (hourOfDay > 11) {
             am = "PM";
             hour_formatted = hourOfDay - 12;
+            if (hour_formatted == 0) {
+                hour_formatted = 12;
+            }
         }
         else {
             hour_formatted = hourOfDay;
@@ -33,8 +37,10 @@ public class AlarmPickerFragment extends DialogFragment implements TimePickerDia
         TextView alarmMinute = getActivity().findViewById(R.id.alarm_minute);
         TextView alarmHour = getActivity().findViewById(R.id.alarm_hour);
         TextView alarmAmPm = getActivity().findViewById(R.id.alarm_am_pm);
+        TextView alarmHourOfDay = getActivity().findViewById(R.id.tf_hour);
         alarmMinute.setText(m);
         alarmHour.setText(h);
         alarmAmPm.setText(am);
+        alarmHourOfDay.setText(Integer.toString(hourOfDay));
     }
 }

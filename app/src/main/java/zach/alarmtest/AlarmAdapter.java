@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import java.util.Date;
 import java.util.List;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder> {
@@ -39,7 +41,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         if (mAlarms != null) {
             AlarmModelDb current = mAlarms.get(position);
             holder.name.setText(current.getName());
-            holder.time.setText(current.getTime());
+            holder.time.setText(current.getDisplayTime());
             holder.active.setChecked(current.getActive());
         }
         else {

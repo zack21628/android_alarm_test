@@ -3,7 +3,6 @@ package zach.alarmtest;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -16,17 +15,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class AlarmHomePage extends AppCompatActivity {
-    public AlarmHomePage CustomListView = null;
-    public ArrayList<AlarmModelDb> CustomListViewValues = new ArrayList<AlarmModelDb>();
     private AlarmViewModel mAlarmViewModel;
 
     public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
@@ -37,10 +30,10 @@ public class AlarmHomePage extends AppCompatActivity {
 
         setContentView(R.layout.activity_alarm_home);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_alarm);
+        FloatingActionButton fab = findViewById(R.id.add_alarm);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,9 +86,11 @@ public class AlarmHomePage extends AppCompatActivity {
             String[] extraArray = data.getStringArrayExtra(CreateEditAlarmPage.EXTRA_REPLY);
             String alarmTime = extraArray[0];
             String alarmName = extraArray[1];
+            String displayTime = extraArray[2];
             Date alarmDate = parseAlarmTime(alarmTime);
-            AlarmModelDb alarm = new AlarmModelDb(extraArray[0], alarmName, true);
-            List<AlarmModelDb> allAlarms = mAlarmViewModel.getAllAlarms().getValue();
+            long time = alarmDate.getTime();
+            AlarmModelDb alarm = new AlarmModelDb(time, displayTime, alarmName, true);
+//            List<AlarmModelDb> allAlarms = mAlarmViewModel.getAllAlarms().getValue();
             mAlarmViewModel.insert(alarm);
         }
         else {
@@ -105,14 +100,13 @@ public class AlarmHomePage extends AppCompatActivity {
 
     public Date parseAlarmTime(String time){
         Integer hour, minute;
-        String am_pm;
         hour = Integer.parseInt(time.substring(0,2));
-        minute = Integer.parseInt(time.substring(3, 5));
-//        am_pm = time.substring(5));
+        minute = Integer.parseInt(time.substring(2));
 
         Date d = new Date();
         d.setHours(hour);
         d.setMinutes(minute);
+        d.setSeconds(0);
 
         return d;
     }

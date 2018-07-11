@@ -10,9 +10,12 @@ public class AlarmModelDb {
     @PrimaryKey (autoGenerate = true)
     private int id ;
 
-    @NonNull
     @ColumnInfo (name = "time")
-    private String time;
+    // private String time;
+    private long time;
+
+    @ColumnInfo (name= "display_time")
+    private String displayTime;
 
     @ColumnInfo (name = "name")
     private String name;
@@ -20,9 +23,10 @@ public class AlarmModelDb {
     @ColumnInfo (name = "active")
     private Boolean active;
 
-    public AlarmModelDb(String time, String name, Boolean active) {
+    public AlarmModelDb(long time, String displayTime, String name, Boolean active) {
         this.id = 0;
         this.time = time;
+        this.displayTime = displayTime;
         this. name = name;
         this.active = active;
     }
@@ -31,9 +35,11 @@ public class AlarmModelDb {
 
     public int getId() { return this.id; }
 
-    public String getTime() {
+    public long getTime() {
         return this.time;
     }
+
+    public String getDisplayTime() {return this.displayTime; }
 
     public String getName() {
         return this.name;

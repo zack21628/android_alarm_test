@@ -7,26 +7,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.TextView;
-
-import java.util.Date;
 import java.util.List;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder> {
+    private final LayoutInflater mInflater;
+    private List<AlarmModelDb> mAlarms;
+    private AlarmClickListener alarmClickListener;
 
-    class AlarmViewHolder extends RecyclerView.ViewHolder {
+    public class AlarmViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView time, name;
         private final Switch active;
-
         private AlarmViewHolder(View itemView) {
             super(itemView);
             time = itemView.findViewById(R.id.alarm_text);
             name = itemView.findViewById(R.id.alarm_name);
             active = itemView.findViewById(R.id.active);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view){
+            if (alarmClickListener != null)
+                alarmClickListener.onClick(view, getAdapterPosition());
         }
     }
-
-    private final LayoutInflater mInflater;
-    private List<AlarmModelDb> mAlarms;
 
     AlarmAdapter(Context context) { mInflater = LayoutInflater.from(context); }
 
@@ -60,5 +64,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
     void setAlarms(List<AlarmModelDb> alarms) {
         mAlarms = alarms;
         notifyDataSetChanged();
+    }
+
+    void setAlarmClickListener(AlarmClickListener listener) {
+        this.alarmClickListener = listener;
     }
 }

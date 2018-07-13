@@ -19,10 +19,13 @@ import android.widget.Toast;
 import java.util.Date;
 import java.util.List;
 
-public class AlarmHomePage extends AppCompatActivity {
+public class AlarmHomePage extends AppCompatActivity implements AlarmClickListener{
     private AlarmViewModel mAlarmViewModel;
+    private AlarmAdapter mAdapter;
+    private List<AlarmModelDb> alarms;
 
     public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
+    public static final String EXTRA_REPLY = "existing_alarm";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,23 +40,41 @@ public class AlarmHomePage extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AlarmHomePage.super.getBaseContext(), CreateEditAlarmPage.class);
-                startActivityForResult(intent, NEW_WORD_ACTIVITY_REQUEST_CODE);
+            Intent intent = new Intent(AlarmHomePage.super.getBaseContext(), CreateEditAlarmPage.class);
+            startActivityForResult(intent, NEW_WORD_ACTIVITY_REQUEST_CODE);
             }
         });
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
-        final AlarmAdapter adapter = new AlarmAdapter(this);
-        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        mAdapter = new AlarmAdapter(this);
+        recyclerView.setAdapter(mAdapter);
+        mAdapter.setAlarmClickListener(this);
 
         mAlarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
         mAlarmViewModel.getAllAlarms().observe(this, new Observer<List<AlarmModelDb>>() {
             @Override
             public void onChanged(@Nullable final List<AlarmModelDb> alarmModelDbs) {
-                adapter.setAlarms(alarmModelDbs);
+                mAdapter.setAlarms(alarmModelDbs);
             }
         });
+    }
+
+    @Override
+    public void onClick(View view, int pos){
+        final AlarmModelDb alarm = mAlarmViewModel.getAllAlarms().getValue().get(pos);
+        int alarmId = alarm.getId();
+        long alarmTime = alarm.getTime();
+        String alarmName = alarm.getName();
+//        String[] existingAlarm = new String[] { Integer.toString(alarmId) , Long.toString(alarmTime), alarmName};
+        Intent intent = new Intent(AlarmHomePage.super.getBaseContext(), CreateEditAlarmPage.class);
+//        intent.putExtra(EXTRA_REPLY, existingAlarm);
+        intent.putExtra("id", alarmId);
+        intent.putExtra("time", alarmTime);
+        intent.putExtra("name", alarmName);
+        intent.putExtra("display", alarm.getDisplayTime());
+        startActivityForResult(intent, NEW_WORD_ACTIVITY_REQUEST_CODE);
     }
 
     @Override

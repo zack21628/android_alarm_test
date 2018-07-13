@@ -12,16 +12,28 @@ import android.widget.TextView;
 
 public class CreateEditAlarmPage extends AppCompatActivity {
 
-    public static final String EXTRA_REPLY = "com.example.android.wordlistsql.REPLY";
+    public static final String EXTRA_REPLY = "new_alarm";
 //    private AlarmModelDb editAlarm;
     private String new_alarm_time, alarm_display_time;
     private EditText new_alarm_name;
+    private Boolean existing_alarm = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_edit_alarm_page);
         new_alarm_name = findViewById(R.id.new_alarm_name);
+
+        Intent intent = getIntent();
+        int alarmId = intent.getIntExtra("id", -1);
+        long alarmTime;
+        String alarmName, displayTime;
+        if (alarmId > 0) {
+            existing_alarm = true;
+            alarmTime = intent.getLongExtra("time", 0);
+            alarmName = intent.getStringExtra("name");
+            displayTime = intent.getStringExtra("display");
+        }
 
         final TextView alarm_hour = findViewById(R.id.alarm_hour);
         final TextView alarm_minute = findViewById(R.id.alarm_minute);
@@ -30,6 +42,15 @@ public class CreateEditAlarmPage extends AppCompatActivity {
         alarm_hour.setOnClickListener(openPickerListener);
         alarm_minute.setOnClickListener(openPickerListener);
         alarm_am_pm.setOnClickListener(openPickerListener);
+
+        if (existing_alarm) {
+            // set all 4 text views
+            // open picker with time set
+//            alarm_hour.setText();
+//            alarm_minute.setText();
+//            alarm_am_pm.setText();
+//            alarm_24_hour.setText();
+        }
 
         final Button saveButton = findViewById(R.id.save_id_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -45,7 +66,7 @@ public class CreateEditAlarmPage extends AppCompatActivity {
                 }
                 else {
                     String name = new_alarm_name.getText().toString();
-                    String[] extras = new String[]{new_alarm_time, name, alarm_display_time};
+                    String[] extras = new String[] {new_alarm_time, name, alarm_display_time};
                     replyIntent.putExtra(EXTRA_REPLY, extras);
                     setResult(RESULT_OK, replyIntent);
                 }
@@ -56,8 +77,8 @@ public class CreateEditAlarmPage extends AppCompatActivity {
     public void showTimePickerDialog(View v) {
         DialogFragment newFragment = new AlarmPickerFragment();
         newFragment.show(getSupportFragmentManager(), "timePicker");
-    }
 
+    }
     View.OnClickListener openPickerListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

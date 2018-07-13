@@ -23,12 +23,9 @@ public class AlarmPickerFragment extends DialogFragment implements TimePickerDia
         String m = String.format(Locale.getDefault(), "%02d", minute);
         String am = "AM";
         int hour_formatted;
-        if (hourOfDay > 11) {
+        if (hourOfDay > 12) {
             am = "PM";
             hour_formatted = hourOfDay - 12;
-            if (hour_formatted == 0) {
-                hour_formatted = 12;
-            }
         }
         else {
             hour_formatted = hourOfDay;

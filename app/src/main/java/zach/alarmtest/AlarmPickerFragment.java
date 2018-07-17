@@ -2,6 +2,7 @@ package zach.alarmtest;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.app.TimePickerDialog;
@@ -15,7 +16,18 @@ public class AlarmPickerFragment extends DialogFragment implements TimePickerDia
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new TimePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, this, 12, 0,
+        int defHour = 12;
+        int defMinute = 0;
+        String tag = this.getTag();
+        if (tag == getResources().getString(R.string.edit_timepicker)) {
+            String h = getArguments().getString("alarm_tf");
+            String m = getArguments().getString("alarm_minute");
+            int hour = Integer.parseInt(h);
+            int minute = Integer.parseInt(m);
+            defHour = hour;
+            defMinute = minute;
+        }
+        return new TimePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, this, defHour,  defMinute,
                 DateFormat.is24HourFormat(getActivity()));
     }
 
@@ -34,7 +46,7 @@ public class AlarmPickerFragment extends DialogFragment implements TimePickerDia
         TextView alarmMinute = getActivity().findViewById(R.id.alarm_minute);
         TextView alarmHour = getActivity().findViewById(R.id.alarm_hour);
         TextView alarmAmPm = getActivity().findViewById(R.id.alarm_am_pm);
-        TextView alarmHourOfDay = getActivity().findViewById(R.id.tf_hour);
+        TextView alarmHourOfDay = getActivity().findViewById(R.id.alarm_hour_tf);
         alarmMinute.setText(m);
         alarmHour.setText(h);
         alarmAmPm.setText(am);

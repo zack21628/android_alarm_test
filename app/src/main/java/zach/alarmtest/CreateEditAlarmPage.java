@@ -1,5 +1,6 @@
 package zach.alarmtest;
 
+import android.content.res.Resources;
 import android.support.v4.app.DialogFragment;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -11,63 +12,67 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class CreateEditAlarmPage extends AppCompatActivity {
-
     public static final String EXTRA_REPLY = "new_alarm";
-//    private AlarmModelDb editAlarm;
-    private String new_alarm_time, alarm_display_time;
-    private EditText new_alarm_name;
+
+    private String new_alarm_time, alarm_hour_tf_time;
+    String displayTime, displayName, displayHour, displayMinute, displayAmPm, displayTf;
     private Boolean existing_alarm = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_edit_alarm_page);
-        new_alarm_name = findViewById(R.id.new_alarm_name);
-
         Intent intent = getIntent();
-        int alarmId = intent.getIntExtra("id", -1);
-        long alarmTime;
-        String alarmName, displayTime;
-        if (alarmId > 0) {
+        final int alarmId = intent.getIntExtra("id", -1);
+        displayTime = displayName = displayHour = displayMinute = displayAmPm = displayTf = "";
+        if (alarmId > -1) {
             existing_alarm = true;
-            alarmTime = intent.getLongExtra("time", 0);
-            alarmName = intent.getStringExtra("name");
+            displayName = intent.getStringExtra("alarm_name");
             displayTime = intent.getStringExtra("display");
+            displayTf = intent.getStringExtra("tf_hour");
+            displayHour = displayTime.substring(0, 2);
+            displayMinute = displayTime.substring(3, 5);
+            displayAmPm = displayTime.substring(5);
         }
 
         final TextView alarm_hour = findViewById(R.id.alarm_hour);
         final TextView alarm_minute = findViewById(R.id.alarm_minute);
         final TextView alarm_am_pm = findViewById(R.id.alarm_am_pm);
-        final TextView alarm_24_hour = findViewById(R.id.tf_hour);
+        final TextView alarm_hour_tf = findViewById(R.id.alarm_hour_tf);
+        final TextView alarm_name = findViewById(R.id.new_alarm_name);
         alarm_hour.setOnClickListener(openPickerListener);
         alarm_minute.setOnClickListener(openPickerListener);
         alarm_am_pm.setOnClickListener(openPickerListener);
 
         if (existing_alarm) {
-            // set all 4 text views
-            // open picker with time set
-//            alarm_hour.setText();
-//            alarm_minute.setText();
-//            alarm_am_pm.setText();
-//            alarm_24_hour.setText();
+            alarm_hour.setText(displayHour);
+            alarm_minute.setText(displayMinute);
+            alarm_am_pm.setText(displayAmPm);
+            alarm_hour_tf.setText(displayTime);
+            alarm_name.setText(displayName);
         }
 
         final Button saveButton = findViewById(R.id.save_id_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new_alarm_time = alarm_24_hour.getText().toString() +
+                new_alarm_time = alarm_hour_tf.getText().toString() +
                         alarm_minute.getText().toString();
-                alarm_display_time = alarm_hour.getText().toString() + ":" +
+                alarm_hour_tf_time = alarm_hour.getText().toString() + ":" +
                         alarm_minute.getText().toString() + " " + alarm_am_pm.getText().toString();
                 Intent replyIntent = new Intent();
                 if (TextUtils.isEmpty(new_alarm_time)) {
                     setResult(RESULT_CANCELED, replyIntent);
                 }
                 else {
-                    String name = new_alarm_name.getText().toString();
-                    String[] extras = new String[] {new_alarm_time, name, alarm_display_time};
-                    replyIntent.putExtra(EXTRA_REPLY, extras);
+                    String name = alarm_name.getText().toString();
+                    replyIntent.putExtra("alarm_time", new_alarm_time);
+                    replyIntent.putExtra("alarm_name", name);
+                    replyIntent.putExtra("display_time", alarm_hour_tf_time);
+                    replyIntent.putExtra("existing_alarm", existing_alarm);
+                    if (existing_alarm) {
+                        replyIntent.putExtra("alarm_id", alarmId);
+                    }
                     setResult(RESULT_OK, replyIntent);
                 }
                 finish();
@@ -76,8 +81,16 @@ public class CreateEditAlarmPage extends AppCompatActivity {
     }
     public void showTimePickerDialog(View v) {
         DialogFragment newFragment = new AlarmPickerFragment();
-        newFragment.show(getSupportFragmentManager(), "timePicker");
+        Bundle editBundle = new Bundle();
+        editBundle.putString("alarm_hour", displayHour);
+        editBundle.putString("alarm_minute", displayMinute);
+        editBundle.putString("alarm_tf", displayTf);
 
+        newFragment.setArguments(editBundle);
+        if (this.existing_alarm)
+            newFragment.show(getSupportFragmentManager(), getResources().getString(R.string.edit_timepicker));
+        else
+            newFragment.show(getSupportFragmentManager(), getResources().getString(R.string.new_timepicker));
     }
     View.OnClickListener openPickerListener = new View.OnClickListener() {
         @Override

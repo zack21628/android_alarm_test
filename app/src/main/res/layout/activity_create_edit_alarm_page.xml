@@ -87,7 +87,7 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:gravity="center_vertical"
-        android:text="@string/am"
+        android:text="@string/pm"
         android:textAlignment="center"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -111,7 +111,7 @@
         app:layout_constraintVertical_bias="0.03" />
 
     <TextView
-        android:id="@+id/tf_hour"
+        android:id="@+id/alarm_hour_tf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"

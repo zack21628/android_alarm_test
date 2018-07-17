@@ -25,7 +25,6 @@ public class AlarmHomePage extends AppCompatActivity implements AlarmClickListen
     private List<AlarmModelDb> alarms;
 
     public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
-    public static final String EXTRA_REPLY = "existing_alarm";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +46,6 @@ public class AlarmHomePage extends AppCompatActivity implements AlarmClickListen
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         mAdapter = new AlarmAdapter(this);
         recyclerView.setAdapter(mAdapter);
         mAdapter.setAlarmClickListener(this);
@@ -67,13 +65,13 @@ public class AlarmHomePage extends AppCompatActivity implements AlarmClickListen
         int alarmId = alarm.getId();
         long alarmTime = alarm.getTime();
         String alarmName = alarm.getName();
-//        String[] existingAlarm = new String[] { Integer.toString(alarmId) , Long.toString(alarmTime), alarmName};
+        String alarmTfHour = alarm.getTfHour();
         Intent intent = new Intent(AlarmHomePage.super.getBaseContext(), CreateEditAlarmPage.class);
-//        intent.putExtra(EXTRA_REPLY, existingAlarm);
         intent.putExtra("id", alarmId);
         intent.putExtra("time", alarmTime);
-        intent.putExtra("name", alarmName);
+        intent.putExtra("alarm_name", alarmName);
         intent.putExtra("display", alarm.getDisplayTime());
+        intent.putExtra("tf_hour", alarmTfHour);
         startActivityForResult(intent, NEW_WORD_ACTIVITY_REQUEST_CODE);
     }
 
@@ -104,15 +102,22 @@ public class AlarmHomePage extends AppCompatActivity implements AlarmClickListen
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            String[] extraArray = data.getStringArrayExtra(CreateEditAlarmPage.EXTRA_REPLY);
-            String alarmTime = extraArray[0];
-            String alarmName = extraArray[1];
-            String displayTime = extraArray[2];
+            String alarmTime = data.getStringExtra("alarm_time");
+            String alarmName = data.getStringExtra("alarm_name");
+            String displayTime = data.getStringExtra("display_time");
+            Boolean existing_alarm = data.getBooleanExtra("existing_alarm", false);
+            int alarmId = data.getIntExtra("alarm_id", -1);
+            String tfHour = alarmTime.substring(0, 2);
             Date alarmDate = parseAlarmTime(alarmTime);
             long time = alarmDate.getTime();
-            AlarmModelDb alarm = new AlarmModelDb(time, displayTime, alarmName, true);
-//            List<AlarmModelDb> allAlarms = mAlarmViewModel.getAllAlarms().getValue();
-            mAlarmViewModel.insert(alarm);
+            AlarmModelDb alarm = new AlarmModelDb(time, displayTime, tfHour, alarmName, true);
+            if (existing_alarm) {
+                alarm.setId(alarmId);
+                mAlarmViewModel.update(alarm);
+            }
+            else {
+                mAlarmViewModel.insert(alarm);
+            }
         }
         else {
             Toast.makeText(getApplicationContext(), R.string.alarm_not_saved, Toast.LENGTH_LONG).show();

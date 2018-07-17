@@ -24,6 +24,8 @@ public class AlarmViewModel extends AndroidViewModel {
         mRepo.insert(alarm);
     }
 
+    public void update(AlarmModelDb alarm) { mRepo.update(alarm); }
+
     public void delete(AlarmModelDb alarm) { mRepo.delete(alarm); }
 
     public void deleteAll() { mRepo.deleteAll(); }

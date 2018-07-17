@@ -38,6 +38,20 @@ public class AlarmRepository {
         }
     }
 
+    public void update(AlarmModelDb alarm) { new updateAsyncTask(mAlarmDao).execute(alarm); }
+
+    private static class updateAsyncTask extends AsyncTask<AlarmModelDb, Void, Void> {
+        private AlarmDao mAsyncTaskDao;
+
+        updateAsyncTask(AlarmDao dao) { mAsyncTaskDao = dao; }
+
+        @Override
+        protected Void doInBackground(final AlarmModelDb... params) {
+            mAsyncTaskDao.update(params[0]);
+            return null;
+        }
+    }
+
     public void delete(AlarmModelDb alarm) {
         new deleteAsyncTask(mAlarmDao).execute(alarm);
     }

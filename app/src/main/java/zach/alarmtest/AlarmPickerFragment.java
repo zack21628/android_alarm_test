@@ -20,7 +20,7 @@ public class AlarmPickerFragment extends DialogFragment implements TimePickerDia
         int defHour = 12;
         int defMinute = 0;
         String tag = this.getTag();
-        if (tag.equals(getResources().getString(R.string.edit_timepicker)) && !already_opened) {
+        if (tag.equals(getResources().getString(R.string.edit_timepicker)) || already_opened) {
             String h = getArguments().getString("alarm_tf");
             String m = getArguments().getString("alarm_minute");
             int hour = Integer.parseInt(h);
@@ -28,6 +28,7 @@ public class AlarmPickerFragment extends DialogFragment implements TimePickerDia
             defHour = hour;
             defMinute = minute;
         }
+
         return new TimePickerDialog(getActivity(), AlertDialog.THEME_HOLO_LIGHT, this, defHour,  defMinute,
                 DateFormat.is24HourFormat(getActivity()));
     }

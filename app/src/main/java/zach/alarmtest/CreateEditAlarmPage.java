@@ -17,7 +17,7 @@ public class CreateEditAlarmPage extends AppCompatActivity {
     private String new_alarm_time, alarm_hour_tf_time;
     String displayTime, displayName, displayHour, displayMinute, displayAmPm, displayTf;
     private Boolean existing_alarm = false;
-
+    private Boolean timepicker_has_been_opened = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,22 +75,24 @@ public class CreateEditAlarmPage extends AppCompatActivity {
                     }
                     setResult(RESULT_OK, replyIntent);
                 }
+                timepicker_has_been_opened = false;
                 finish();
             }
         });
     }
     public void showTimePickerDialog(View v) {
-        DialogFragment newFragment = new AlarmPickerFragment();
+        AlarmPickerFragment newFragment = new AlarmPickerFragment();
         Bundle editBundle = new Bundle();
         editBundle.putString("alarm_hour", displayHour);
         editBundle.putString("alarm_minute", displayMinute);
         editBundle.putString("alarm_tf", displayTf);
-
+        editBundle.putBoolean("already_opened", timepicker_has_been_opened);
         newFragment.setArguments(editBundle);
         if (this.existing_alarm)
             newFragment.show(getSupportFragmentManager(), getResources().getString(R.string.edit_timepicker));
         else
             newFragment.show(getSupportFragmentManager(), getResources().getString(R.string.new_timepicker));
+        timepicker_has_been_opened = true;
     }
     View.OnClickListener openPickerListener = new View.OnClickListener() {
         @Override

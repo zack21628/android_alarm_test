@@ -16,10 +16,11 @@ public class AlarmPickerFragment extends DialogFragment implements TimePickerDia
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Boolean already_opened = getArguments().getBoolean("already_opened", false);
         int defHour = 12;
         int defMinute = 0;
         String tag = this.getTag();
-        if (tag == getResources().getString(R.string.edit_timepicker)) {
+        if (tag.equals(getResources().getString(R.string.edit_timepicker)) && !already_opened) {
             String h = getArguments().getString("alarm_tf");
             String m = getArguments().getString("alarm_minute");
             int hour = Integer.parseInt(h);
@@ -33,6 +34,7 @@ public class AlarmPickerFragment extends DialogFragment implements TimePickerDia
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         String m = String.format(Locale.getDefault(), "%02d", minute);
+        String tf = String.format(Locale.getDefault(), "%02d", hourOfDay);
         String am = "AM";
         int hour_formatted;
         if (hourOfDay > 12) {
@@ -50,6 +52,6 @@ public class AlarmPickerFragment extends DialogFragment implements TimePickerDia
         alarmMinute.setText(m);
         alarmHour.setText(h);
         alarmAmPm.setText(am);
-        alarmHourOfDay.setText(Integer.toString(hourOfDay));
+        alarmHourOfDay.setText(tf);
     }
 }

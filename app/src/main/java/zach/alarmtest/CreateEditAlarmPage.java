@@ -9,7 +9,10 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 public class CreateEditAlarmPage extends AppCompatActivity {
     public static final String EXTRA_REPLY = "new_alarm";
@@ -43,6 +46,9 @@ public class CreateEditAlarmPage extends AppCompatActivity {
         alarm_hour.setOnClickListener(openPickerListener);
         alarm_minute.setOnClickListener(openPickerListener);
         alarm_am_pm.setOnClickListener(openPickerListener);
+        final Button saveButton = findViewById(R.id.save_id_button);
+        final TextView dateText = findViewById(R.id.date_text_view);
+        final ImageView dateImg = findViewById(R.id.calendar_image);
 
         if (existing_alarm) {
             alarm_hour.setText(displayHour);
@@ -52,7 +58,6 @@ public class CreateEditAlarmPage extends AppCompatActivity {
             alarm_name.setText(displayName);
         }
 
-        final Button saveButton = findViewById(R.id.save_id_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,6 +85,7 @@ public class CreateEditAlarmPage extends AppCompatActivity {
             }
         });
     }
+
     public void showTimePickerDialog(View v) {
         AlarmPickerFragment newFragment = new AlarmPickerFragment();
         Bundle editBundle = new Bundle();
@@ -100,4 +106,8 @@ public class CreateEditAlarmPage extends AppCompatActivity {
             showTimePickerDialog(v);
         }
     };
+
+    public void showDatePickerDialog(View v) {
+        
+    }
 }
